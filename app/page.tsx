@@ -480,7 +480,7 @@ export default function Home() {
                   : `Awaiting run`}
               </CardTitle>
               <CardDescription>
-                Demonstrates how UUID-derived seeds produce distinct but
+                Demonstrates how random seeds produce distinct but
                 reproducible outputs.
               </CardDescription>
             </CardHeader>
