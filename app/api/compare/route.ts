@@ -286,8 +286,18 @@ function parseEigenMessage(raw: string) {
     return trimmed;
   }
 
+  const messageMarker = "<|message|>";
+  const markerIndex = trimmed.indexOf(messageMarker);
+  const withoutMarker =
+    markerIndex !== -1
+      ? trimmed.slice(markerIndex + messageMarker.length)
+      : trimmed;
+
   const lastEndTag = trimmed.lastIndexOf("<|end|>");
-  const withoutPreceding = lastEndTag !== -1 ? trimmed.slice(lastEndTag + 6) : trimmed;
+  const withoutPreceding =
+    lastEndTag !== -1
+      ? trimmed.slice(lastEndTag + 6)
+      : withoutMarker;
 
   const cleanedTags = withoutPreceding.replace(/<\|[^>]+?\|>/g, "");
 
