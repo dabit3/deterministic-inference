@@ -1,4 +1,4 @@
-## VerifAI 
+## Deterministic Inference 
 
 Run a deterministic EigenAI inference alongside sampled OpenAI runs to highlight how EigenAI creates a seed-controlled response you can reproduce and verify any time.
 

@@ -172,7 +172,7 @@ export default function Home() {
             <ShieldCheck className="h-4 w-4 text-current" />
             Deterministic vs non-deterministic inference
           </Badge>
-          <h1 className="text-pretty text-4xl font-semibold tracking-tight sm:text-[70px]">
+          <h1 className="text-pretty text-4xl font-semibold tracking-tight sm:text-[70px] leading-[1.1]">
             DETERMINISTIC INFERENCE
           </h1>
           <p className="max-w-3xl text-balance text-muted-foreground sm:text-lg">
@@ -529,6 +529,18 @@ export default function Home() {
             )}
           </Card>
         </section>
+        <footer className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <span>Open source on</span>
+          <a
+            href="https://github.com/dabit3/deterministic-inference"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-full border border-blue-700/20 bg-blue-700/10 px-3 py-1 text-blue-700 transition hover:bg-blue-700/20 dark:border-blue-600/40 dark:bg-blue-700/20 dark:text-blue-200 dark:hover:bg-blue-700/30"
+          >
+            <span aria-hidden="true">🐙</span>
+            <span className="font-medium">GitHub</span>
+          </a>
+        </footer>
       </main>
     </div>
   );
