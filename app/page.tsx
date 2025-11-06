@@ -424,8 +424,11 @@ export default function Home() {
                     key={`${response.responseId ?? "deterministic"}-${index}`}
                     className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
                   >
-                    <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
                       <span>Run {index + 1}</span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
+                        🔒
+                      </span>
                     </div>
                     <p className="whitespace-pre-wrap leading-relaxed text-foreground">
                       {response.message || "No content returned."}
@@ -488,8 +491,11 @@ export default function Home() {
                     key={`${response.responseId ?? "random"}-${index}`}
                     className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
                   >
-                    <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
                       <span>Run {index + 1}</span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
+                        🔒
+                      </span>
                     </div>
                     <p className="whitespace-pre-wrap leading-relaxed text-foreground">
                       {response.message || "No content returned."}
