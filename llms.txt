@@ -1,0 +1,2 @@
+VerifAI Comparator showcases deterministic EigenAI inference alongside sampled OpenAI runs.
+The app is hosted at https://www.deterministicinference.com/.
