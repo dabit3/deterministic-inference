@@ -60,6 +60,16 @@ type CompareResult = {
   };
 };
 
+type CompareErrorResponse = {
+  error?: string;
+};
+
+function isErrorResponse(
+  payload: CompareResult | CompareErrorResponse
+): payload is CompareErrorResponse {
+  return typeof payload === "object" && payload !== null && "error" in payload;
+}
+
 const defaultPrompt = "What are the top 5 restaurants in Tokyo? Names only in a comma separated list.";
 const envSeed = Number.parseInt(
   process.env.NEXT_PUBLIC_EIGENAI_DEFAULT_SEED ?? "",
@@ -103,15 +113,21 @@ export default function Home() {
         }),
       });
 
-      const payload = (await response.json()) as
-        | CompareResult
-        | { error?: string };
+      const payload = (await response.json()) as CompareResult | CompareErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload?.error || "Request failed.");
+        const message =
+          isErrorResponse(payload) && payload.error
+            ? payload.error
+            : "Request failed.";
+        throw new Error(message);
       }
 
-      setResult(payload as CompareResult);
+      if (isErrorResponse(payload)) {
+        throw new Error(payload.error ?? "Request failed.");
+      }
+
+      setResult(payload);
     } catch (requestError) {
       const message =
         requestError instanceof Error
