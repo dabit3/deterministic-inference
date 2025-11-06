@@ -197,6 +197,7 @@ export default function Home() {
                     value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
                     placeholder="Ask the models anything..."
+                    className="text-md"
                   />
                 </div>
               </div>
