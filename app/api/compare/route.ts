@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { performance } from "node:perf_hooks";
 import { NextRequest, NextResponse } from "next/server";
 import {
   EIGENAI_MODEL,
@@ -94,40 +95,55 @@ export async function POST(request: NextRequest) {
 
   try {
     const [openaiResults, eigenResult, eigenRandomResult] = await Promise.all([
-      collectOpenAiRuns({
-        endpoint: openaiEndpoint,
-        apiKey: openaiKey,
-        model: openaiModel,
-        prompt,
-        runs,
-        maxTokens: openaiMaxTokens,
-      }),
-      collectEigenRuns({
-        endpoint: eigenEndpoint,
-        apiKey: eigenKey,
-        model: eigenModel,
-        prompt,
-        seed: eigenSeed,
-        runs,
-        maxTokens: eigenMaxTokens,
-      }),
-      collectEigenRuns({
-        endpoint: eigenEndpoint,
-        apiKey: eigenKey,
-        model: eigenModel,
-        prompt,
-        seed: randomSeed,
-        runs,
-        maxTokens: eigenMaxTokens,
-        seedUuid: randomSeedUuid,
-      }),
+      measureLatency(() =>
+        collectOpenAiRuns({
+          endpoint: openaiEndpoint,
+          apiKey: openaiKey,
+          model: openaiModel,
+          prompt,
+          runs,
+          maxTokens: openaiMaxTokens,
+        })
+      ),
+      measureLatency(() =>
+        collectEigenRuns({
+          endpoint: eigenEndpoint,
+          apiKey: eigenKey,
+          model: eigenModel,
+          prompt,
+          seed: eigenSeed,
+          runs,
+          maxTokens: eigenMaxTokens,
+        })
+      ),
+      measureLatency(() =>
+        collectEigenRuns({
+          endpoint: eigenEndpoint,
+          apiKey: eigenKey,
+          model: eigenModel,
+          prompt,
+          seed: randomSeed,
+          runs,
+          maxTokens: eigenMaxTokens,
+          seedUuid: randomSeedUuid,
+        })
+      ),
     ]);
 
     return NextResponse.json({
       prompt,
-      openai: openaiResults,
-      eigen: eigenResult,
-      eigenRandom: eigenRandomResult,
+      openai: {
+        ...openaiResults.result,
+        latencyMs: openaiResults.latencyMs,
+      },
+      eigen: {
+        ...eigenResult.result,
+        latencyMs: eigenResult.latencyMs,
+      },
+      eigenRandom: {
+        ...eigenRandomResult.result,
+        latencyMs: eigenRandomResult.latencyMs,
+      },
     });
   } catch (error) {
     console.error("LLM comparison failed:", error);
@@ -316,4 +332,13 @@ function uuidToSeed(uuid: string) {
   const hex = uuid.replace(/-/g, "").slice(0, 8);
   const value = Number.parseInt(hex, 16) || 0;
   return value & 0x7fffffff;
+}
+
+async function measureLatency<T>(operation: () => Promise<T>) {
+  const start = performance.now();
+  const result = await operation();
+  return {
+    result,
+    latencyMs: Math.max(0, Math.round(performance.now() - start)),
+  };
 }

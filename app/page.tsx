@@ -44,12 +44,14 @@ type CompareResult = {
     model: string;
     runs: number;
     responses: CompareRun[];
+    latencyMs: number;
   };
   eigen: {
     model: string;
     seed: number;
     runs: number;
     responses: CompareRun[];
+    latencyMs: number;
   };
   eigenRandom: {
     model: string;
@@ -57,6 +59,7 @@ type CompareResult = {
     seedUuid?: string;
     runs: number;
     responses: CompareRun[];
+    latencyMs: number;
   };
 };
 
@@ -361,28 +364,34 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             {result ? (
-              <CardContent className="grid gap-4">
-                {result.openai.responses.map((response, index) => (
-                  <div
-                    key={`${response.responseId ?? "run"}-${index}`}
-                    className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
-                  >
-                    <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-                      <span>Run {index + 1}</span>
+              <>
+                <CardContent className="grid gap-4">
+                  {result.openai.responses.map((response, index) => (
+                    <div
+                      key={`${response.responseId ?? "run"}-${index}`}
+                      className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
+                    >
+                      <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                        <span>Run {index + 1}</span>
+                      </div>
+                      <p className="whitespace-pre-wrap leading-relaxed text-foreground">
+                        {response.message || "No content returned."}
+                      </p>
+                      <UsageDetails usage={response.usage} />
                     </div>
-                    <p className="whitespace-pre-wrap leading-relaxed text-foreground">
-                      {response.message || "No content returned."}
+                  ))}
+                  {result.openai.responses.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No responses were returned. Check your credentials and model
+                      availability.
                     </p>
-                    <UsageDetails usage={response.usage} />
-                  </div>
-                ))}
-                {result.openai.responses.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No responses were returned. Check your credentials and model
-                    availability.
-                  </p>
-                ) : null}
-              </CardContent>
+                  ) : null}
+                </CardContent>
+                <ProviderLatencyFooter
+                  label="OpenAI total latency"
+                  latencyMs={result.openai.latencyMs}
+                />
+              </>
             ) : (
               <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p>
@@ -430,31 +439,37 @@ export default function Home() {
               ) : null} */}
             </CardHeader>
             {result ? (
-              <CardContent className="grid gap-4">
-                {result.eigen.responses.map((response, index) => (
-                  <div
-                    key={`${response.responseId ?? "deterministic"}-${index}`}
-                    className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
-                  >
-                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
-                      <span>Run {index + 1}</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
-                        🔒
-                      </span>
+              <>
+                <CardContent className="grid gap-4">
+                  {result.eigen.responses.map((response, index) => (
+                    <div
+                      key={`${response.responseId ?? "deterministic"}-${index}`}
+                      className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
+                    >
+                      <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
+                        <span>Run {index + 1}</span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
+                          🔒
+                        </span>
+                      </div>
+                      <p className="whitespace-pre-wrap leading-relaxed text-foreground">
+                        {response.message || "No content returned."}
+                      </p>
+                      <UsageDetails usage={response.usage} />
                     </div>
-                    <p className="whitespace-pre-wrap leading-relaxed text-foreground">
-                      {response.message || "No content returned."}
+                  ))}
+                  {result.eigen.responses.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No responses were returned. Check your credentials and model
+                      availability.
                     </p>
-                    <UsageDetails usage={response.usage} />
-                  </div>
-                ))}
-                {result.eigen.responses.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No responses were returned. Check your credentials and model
-                    availability.
-                  </p>
-                ) : null}
-              </CardContent>
+                  ) : null}
+                </CardContent>
+                <ProviderLatencyFooter
+                  label="EigenAI (seeded) total latency"
+                  latencyMs={result.eigen.latencyMs}
+                />
+              </>
             ) : (
               <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p>
@@ -497,36 +512,42 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             {result ? (
-              <CardContent className="grid gap-4">
-                {result.eigenRandom.responses.map((response, index) => (
-                  <div
-                    key={`${response.responseId ?? "random"}-${index}`}
-                    className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
-                  >
-                    <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
-                      <span>Run {index + 1}</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
-                        🔒
-                      </span>
+              <>
+                <CardContent className="grid gap-4">
+                  {result.eigenRandom.responses.map((response, index) => (
+                    <div
+                      key={`${response.responseId ?? "random"}-${index}`}
+                      className="rounded-lg border border-border/70 bg-background/60 p-4 text-sm shadow-sm"
+                    >
+                      <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-wide text-muted-foreground">
+                        <span>Run {index + 1}</span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:bg-blue-700/20 dark:text-blue-200">
+                          🔒
+                        </span>
+                      </div>
+                      <p className="whitespace-pre-wrap leading-relaxed text-foreground">
+                        {response.message || "No content returned."}
+                      </p>
+                      <UsageDetails usage={response.usage} />
                     </div>
-                    <p className="whitespace-pre-wrap leading-relaxed text-foreground">
-                      {response.message || "No content returned."}
+                  ))}
+                  {result.eigenRandom.responses.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Seed UUID: {result.eigenRandom.seedUuid ?? "n/a"}
                     </p>
-                    <UsageDetails usage={response.usage} />
-                  </div>
-                ))}
-                {result.eigenRandom.responses.length > 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Seed UUID: {result.eigenRandom.seedUuid ?? "n/a"}
-                  </p>
-                )}
-                {result.eigenRandom.responses.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No responses were returned. Check your credentials and model
-                    availability.
-                  </p>
-                ) : null}
-              </CardContent>
+                  )}
+                  {result.eigenRandom.responses.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No responses were returned. Check your credentials and model
+                      availability.
+                    </p>
+                  ) : null}
+                </CardContent>
+                <ProviderLatencyFooter
+                  label="EigenAI (random seed) total latency"
+                  latencyMs={result.eigenRandom.latencyMs}
+                />
+              </>
             ) : (
               <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p>
@@ -556,6 +577,40 @@ export default function Home() {
       </main>
     </div>
   );
+}
+
+function ProviderLatencyFooter({
+  label,
+  latencyMs,
+}: {
+  label: string;
+  latencyMs?: number;
+}) {
+  if (typeof latencyMs !== "number" || Number.isNaN(latencyMs)) {
+    return null;
+  }
+
+  return (
+    <CardFooter className="border-t border-border/60 pt-3 text-xs text-muted-foreground">
+      <span>
+        {label}: {formatLatency(latencyMs)}
+      </span>
+    </CardFooter>
+  );
+}
+
+function formatLatency(latencyMs: number) {
+  if (!Number.isFinite(latencyMs) || latencyMs < 0) {
+    return "—";
+  }
+
+  if (latencyMs < 1000) {
+    return `${Math.round(latencyMs)} ms`;
+  }
+
+  const seconds = latencyMs / 1000;
+  const precision = seconds >= 10 ? 0 : 1;
+  return `${seconds.toFixed(precision)} s`;
 }
 
 function UsageDetails({
