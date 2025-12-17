@@ -148,6 +148,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background py-12 font-sans">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
         <header className="flex items-center justify-between rounded-2xl bg-card/80 px-5 py-4 ">
+        <a href="https://developers.eigencloud.xyz?utm_source=deterministic_inference&utm_medium=website" target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <Image
               src={theme === "dark" ? "/eigencloud_logo.png" : "/eigencloud_logo_black.png"}
@@ -166,6 +167,7 @@ export default function Home() {
               </span>
             </div> */}
           </div>
+          </a>
           <ThemeToggle />
         </header>
 
@@ -185,7 +187,7 @@ export default function Home() {
           <p className="max-w-3xl text-balance text-sm text-muted-foreground">
             To get started with EigenAI, sign up for a free account {" "}
             <a 
-              href="https://docs.eigencloud.xyz/products/eigenai/concepts/eigenai-overview" 
+              href="https://docs.eigencloud.xyz/products/eigenai/concepts/eigenai-overview?utm_source=deterministic_inference&utm_medium=website" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-2 transition-colors hover:decoration-blue-700 dark:text-blue-400 dark:decoration-blue-400/30 dark:hover:decoration-blue-400"
